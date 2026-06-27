@@ -56,6 +56,9 @@ class TeacherDashboard {
                 throw new Error('PDF.js library not loaded yet. Please try again.');
             }
 
+            document.getElementById('uploadStatus').textContent = '⏳ Extracting PDF content...';
+            document.getElementById('uploadStatus').className = 'loading';
+
             const pdf = await pdfjsLib.getDocument({data: pdfData}).promise;
             let fullText = '';
 
@@ -65,18 +68,124 @@ class TeacherDashboard {
                 fullText += textContent.items.map(item => item.str).join(' ');
             }
 
-            document.getElementById('uploadStatus').textContent = '✅ PDF uploaded successfully!';
-            document.getElementById('uploadStatus').className = 'success';
-
             // Display preview
             const preview = document.getElementById('pdfPreview');
             preview.innerHTML = `<strong>Extracted Content Preview:</strong><p>${fullText.substring(0, 300)}...</p>`;
 
-            // Enable auto-generate option
-            showNotification('PDF loaded! You can now add questions manually or load samples.');
+            // Generate questions from PDF content
+            await this.generateQuestionsFromPDF(fullText);
+
         } catch (error) {
             document.getElementById('uploadStatus').textContent = '❌ Error reading PDF: ' + error.message;
             document.getElementById('uploadStatus').className = 'error';
+        }
+    }
+
+    async generateQuestionsFromPDF(pdfText) {
+        try {
+            document.getElementById('uploadStatus').textContent = '🤖 Generating questions from PDF...';
+            document.getElementById('uploadStatus').className = 'loading';
+
+            // Use OpenAI API to generate questions
+            const apiKey = prompt('Please enter your OpenAI API key to generate questions from the PDF:');
+            
+            if (!apiKey) {
+                showNotification('API key required to generate questions', 'error');
+                return;
+            }
+
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [{
+                        role: 'user',
+                        content: `Based on the following text, generate 4 multiple choice questions with 4 answer options each. Format your response as a JSON array of objects with this structure:
+                        [
+                            {
+                                "question": "Question text?",
+                                "answers": ["Option A", "Option B", "Option C", "Option D"],
+                                "correctAnswer": 0
+                            }
+                        ]
+                        
+                        Text to generate questions from:
+                        ${pdfText.substring(0, 2000)}`
+                    }],
+                    temperature: 0.7,
+                    max_tokens: 1500
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate questions from AI');
+            }
+
+            const data = await response.json();
+            const content = data.choices[0].message.content;
+            
+            // Parse JSON from response
+            const jsonMatch = content.match(/\[[\s\S]*\]/);
+            if (!jsonMatch) {
+                throw new Error('Could not parse AI response');
+            }
+
+            const generatedQuestions = JSON.parse(jsonMatch[0]);
+
+            // Load the generated questions into the form
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            this.questions = [];
+
+            generatedQuestions.forEach((q, index) => {
+                const questionForm = document.createElement('div');
+                questionForm.className = 'question-form';
+                questionForm.id = `question-${index + 1}`;
+
+                let answersHTML = '';
+                q.answers.forEach((answer, answerIndex) => {
+                    const isCorrect = answerIndex === q.correctAnswer;
+                    answersHTML += `
+                        <div class="answer-option">
+                            <input type="text" class="answer-input" value="${answer}">
+                            <input type="radio" name="correct-${index}" class="correct-answer" ${isCorrect ? 'checked' : ''}>
+                            <span>Correct</span>
+                        </div>
+                    `;
+                });
+
+                questionForm.innerHTML = `
+                    <div class="question-header">
+                        <h4>Question ${index + 1}</h4>
+                        <button type="button" class="btn-small btn-danger" onclick="dashboard.removeQuestion(${index})">Remove</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Question Text:</label>
+                        <input type="text" class="question-text" value="${q.question}">
+                    </div>
+                    <div class="answers-options">
+                        <label>Answer Options:</label>
+                        ${answersHTML}
+                    </div>
+                `;
+
+                container.appendChild(questionForm);
+                this.questions.push(q);
+            });
+
+            document.getElementById('uploadStatus').textContent = '✅ PDF uploaded and questions generated!';
+            document.getElementById('uploadStatus').className = 'success';
+            showNotification(`✅ Generated ${generatedQuestions.length} questions from PDF! Feel free to edit them.`);
+            this.updateCreateButton();
+
+        } catch (error) {
+            document.getElementById('uploadStatus').textContent = '❌ Error generating questions: ' + error.message;
+            document.getElementById('uploadStatus').className = 'error';
+            showNotification('Failed to generate questions: ' + error.message, 'error');
         }
     }
 
