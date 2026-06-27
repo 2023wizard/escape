@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Educational Snake Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👨‍🏫 Teacher Dashboard</h1>
+            <div class="header-actions">
+                <a href="index.html" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </header>
+
+        <div class="teacher-dashboard">
+            <!-- Create New Lesson Section -->
+            <div class="dashboard-section create-lesson">
+                <h2>📖 Create New Lesson</h2>
+                
+                <div class="form-group">
+                    <label for="lessonName">Lesson Name:</label>
+                    <input type="text" id="lessonName" placeholder="e.g., Biology 101 - Photosynthesis">
+                </div>
+
+                <div class="form-group">
+                    <label for="lessonDescription">Lesson Description:</label>
+                    <textarea id="lessonDescription" placeholder="Brief description of what students will learn..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Lesson Content (PDF):</label>
+                    <div class="upload-area" id="uploadArea">
+                        <p>📎 Click or drag PDF here</p>
+                        <input type="file" id="pdfInput" accept=".pdf" style="display: none;">
+                    </div>
+                    <p id="uploadStatus"></p>
+                    <div id="pdfPreview" class="pdf-preview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Questions:</label>
+                    <div id="questionsContainer" class="questions-container"></div>
+                    <button id="addQuestionBtn" class="btn btn-secondary">+ Add Question</button>
+                    <button id="loadSampleQuestionsBtn" class="btn btn-secondary">Load Sample Questions</button>
+                </div>
+
+                <div class="form-group button-group">
+                    <button id="createLessonBtn" class="btn btn-large" disabled>Create Lesson</button>
+                    <button id="clearFormBtn" class="btn btn-secondary">Clear All</button>
+                </div>
+            </div>
+
+            <!-- Active Lessons Section -->
+            <div class="dashboard-section active-lessons">
+                <h2>🎮 Active Lessons</h2>
+                <div id="lessonsListContainer" class="lessons-list"></div>
+                <p id="noLessonsMsg" class="no-items">No lessons created yet. Create one above!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="pdfjs-dist/build/pdf.min.js"></script>
+    <script src="shared.js"></script>
+    <script src="teacher.js"></script>
+</body>
+</html>

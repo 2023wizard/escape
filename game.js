@@ -1,7 +1,12 @@
-// Educational Snake Game
+// Educational Snake Game - Student Version
 class EducationalSnakeGame {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
+        if (!this.canvas) {
+            this.showError('Canvas not found');
+            return;
+        }
+
         this.ctx = this.canvas.getContext('2d');
         
         // Game variables
@@ -10,7 +15,7 @@ class EducationalSnakeGame {
         this.books = [];
         this.direction = {x: 1, y: 0};
         this.nextDirection = {x: 1, y: 0};
-        this.gameRunning = true;
+        this.gameRunning = false;
         this.gamePaused = false;
         this.gameSpeed = 100;
         this.lastMoveTime = 0;
@@ -28,15 +33,46 @@ class EducationalSnakeGame {
         this.currentQuestion = null;
         this.selectedAnswer = null;
         this.lessonQuestions = [];
+        this.currentLesson = null;
         
-        // Initialize books
-        this.spawnBook();
+        // Initialize
+        this.initializeGame();
+    }
+
+    initializeGame() {
+        // Get lesson from storage
+        this.currentLesson = LessonStorage.getCurrentLesson();
         
+        if (!this.currentLesson) {
+            this.showError('No lesson found. Please start from the home page.');
+            return;
+        }
+
+        this.lessonQuestions = this.currentLesson.questions || [];
+        this.totalBooks = this.currentLesson.totalBooks || 20;
+        this.totalRounds = Math.ceil(this.totalBooks / 5);
+
+        // Display lesson info
+        document.getElementById('lessonInfo').innerHTML = `
+            <span class="lesson-title">${this.currentLesson.name}</span>
+        `;
+
         // Setup event listeners
         this.setupEventListeners();
         
+        // Initialize books and start
+        this.spawnBook();
+        this.gameRunning = true;
+        this.updateStats();
+        
         // Start game loop
         this.gameLoop();
+    }
+
+    showError(message) {
+        const loadingScreen = document.getElementById('loadingScreen');
+        document.getElementById('loadingMessage').style.display = 'none';
+        document.getElementById('loadingError').textContent = message;
     }
     
     setupEventListeners() {
@@ -45,49 +81,13 @@ class EducationalSnakeGame {
         
         // Button controls
         document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
-        document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+        document.getElementById('quitBtn').addEventListener('click', () => this.quitGame());
         document.getElementById('submitBtn').addEventListener('click', () => this.submitAnswer());
-        document.getElementById('startGameBtn').addEventListener('click', () => this.startGame());
-        document.getElementById('loadSampleBtn').addEventListener('click', () => this.loadSampleQuestions());
         document.getElementById('playAgainBtn').addEventListener('click', () => this.playAgain());
-        document.getElementById('uploadNewBtn').addEventListener('click', () => this.uploadNew());
-        
-        // PDF upload
-        const uploadArea = document.getElementById('uploadArea');
-        const pdfInput = document.getElementById('pdfInput');
-        
-        uploadArea.addEventListener('click', () => pdfInput.click());
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            if (e.dataTransfer.files[0]) {
-                this.handlePDFUpload(e.dataTransfer.files[0]);
-            }
-        });
-        
-        pdfInput.addEventListener('change', (e) => {
-            if (e.target.files[0]) {
-                this.handlePDFUpload(e.target.files[0]);
-            }
-        });
     }
     
     handleKeyPress(e) {
         if (this.gamePaused || !this.gameRunning) return;
-        
-        const key = e.key.toLowerCase();
-        const arrowKey = e.key.includes('Arrow');
-        
-        if (arrowKey) {
-            e.preventDefault();
-        }
         
         switch(e.key) {
             case 'ArrowUp':
@@ -272,6 +272,13 @@ class EducationalSnakeGame {
         this.gamePaused = !this.gamePaused;
         document.getElementById('pauseBtn').textContent = this.gamePaused ? 'Resume' : 'Pause';
     }
+
+    quitGame() {
+        if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
+            LessonStorage.clearCurrentLesson();
+            window.location.href = 'index.html';
+        }
+    }
     
     pauseGameForQuiz() {
         this.gameRunning = false;
@@ -298,7 +305,7 @@ class EducationalSnakeGame {
         this.currentRound = Math.floor(this.booksCollected / 5);
         
         if (this.lessonQuestions.length === 0) {
-            alert('No questions loaded. Please load lesson content first.');
+            alert('No questions in this lesson.');
             this.resumeGame();
             return;
         }
@@ -395,15 +402,6 @@ class EducationalSnakeGame {
         document.getElementById('pauseBtn').textContent = 'Pause';
     }
     
-    startGame() {
-        if (this.lessonQuestions.length === 0) {
-            alert('Please load lesson questions first.');
-            return;
-        }
-        this.resetGame();
-        this.switchScreen('gameScreen');
-    }
-    
     showGameOver() {
         document.getElementById('finalQuestions').textContent = this.questionsAnswered;
         document.getElementById('finalCorrect').textContent = this.correctAnswers;
@@ -421,106 +419,6 @@ class EducationalSnakeGame {
         this.switchScreen('gameScreen');
     }
     
-    uploadNew() {
-        this.resetGame();
-        this.questionsAnswered = 0;
-        this.correctAnswers = 0;
-        this.lessonQuestions = [];
-        this.switchScreen('lessonScreen');
-    }
-    
-    handlePDFUpload(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.extractPDFText(e.target.result);
-        };
-        reader.readAsArrayBuffer(file);
-    }
-    
-    async extractPDFText(pdfData) {
-        try {
-            const pdf = await pdfjsLib.getDocument({data: pdfData}).promise;
-            let fullText = '';
-            
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const textContent = await page.getTextContent();
-                fullText += textContent.items.map(item => item.str).join(' ');
-            }
-            
-            document.getElementById('uploadStatus').textContent = '✅ PDF uploaded successfully!';
-            document.getElementById('uploadStatus').className = 'success';
-            
-            // Display extracted text preview
-            const preview = document.getElementById('pdfPreview');
-            preview.innerHTML = `<strong>Extracted Text Preview:</strong><p>${fullText.substring(0, 300)}...</p>`;
-            
-            // Generate questions from the text
-            this.generateQuestionsFromText(fullText);
-            
-            document.getElementById('startGameBtn').disabled = false;
-        } catch (error) {
-            document.getElementById('uploadStatus').textContent = '❌ Error reading PDF: ' + error.message;
-            document.getElementById('uploadStatus').className = 'error';
-        }
-    }
-    
-    generateQuestionsFromText(text) {
-        // This is a simplified question generator
-        // In production, you'd use NLP or have pre-defined questions
-        const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 20);
-        const questions = [];
-        
-        for (let i = 0; i < Math.min(4, sentences.length); i++) {
-            const sentence = sentences[i].trim();
-            if (sentence.length > 20) {
-                questions.push({
-                    question: `What is mentioned about: ${sentence.substring(0, 60)}...?`,
-                    answers: [
-                        `${sentence.substring(0, 40)}...`,
-                        `Option B: ${Math.random().toString(36).substring(7)}`,
-                        `Option C: ${Math.random().toString(36).substring(7)}`,
-                        `Option D: ${Math.random().toString(36).substring(7)}`
-                    ],
-                    correctAnswer: 0
-                });
-            }
-        }
-        
-        this.lessonQuestions = questions.length > 0 ? questions : this.loadSampleQuestions();
-    }
-    
-    loadSampleQuestions() {
-        this.lessonQuestions = [
-            {
-                question: "What is the capital of France?",
-                answers: ["Paris", "London", "Berlin", "Madrid"],
-                correctAnswer: 0
-            },
-            {
-                question: "What is 2 + 2?",
-                answers: ["3", "4", "5", "6"],
-                correctAnswer: 1
-            },
-            {
-                question: "Who wrote Romeo and Juliet?",
-                answers: ["Jane Austen", "Charles Dickens", "William Shakespeare", "Mark Twain"],
-                correctAnswer: 2
-            },
-            {
-                question: "What is the largest planet in our solar system?",
-                answers: ["Saturn", "Neptune", "Jupiter", "Earth"],
-                correctAnswer: 2
-            }
-        ];
-        
-        document.getElementById('uploadStatus').textContent = '📚 Sample questions loaded!';
-        document.getElementById('uploadStatus').className = 'success';
-        document.getElementById('startGameBtn').disabled = false;
-        
-        return this.lessonQuestions;
-    }
-    
     switchScreen(screenId) {
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
@@ -529,9 +427,16 @@ class EducationalSnakeGame {
     }
 }
 
-// Initialize game when page loads
+// Initialize when page loads
 window.addEventListener('DOMContentLoaded', () => {
-    // Show lesson screen first
-    document.getElementById('lessonScreen').classList.add('active');
-    new EducationalSnakeGame();
+    // First show loading screen
+    const game = new EducationalSnakeGame();
+    
+    // If game initialized successfully, hide loading screen
+    if (game.currentLesson) {
+        setTimeout(() => {
+            document.getElementById('loadingScreen').classList.remove('active');
+            document.getElementById('gameScreen').classList.add('active');
+        }, 500);
+    }
 });

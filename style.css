@@ -47,11 +47,31 @@ header h1 {
     margin-bottom: 15px;
 }
 
+.subtitle {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.header-actions {
+    margin-top: 15px;
+}
+
+.lesson-info {
+    font-size: 0.95em;
+    opacity: 0.95;
+    margin-top: 10px;
+}
+
+.lesson-title {
+    font-weight: 600;
+}
+
 .stats {
     display: flex;
     justify-content: center;
     gap: 40px;
     font-size: 1.1em;
+    margin-top: 15px;
 }
 
 .stats span {
@@ -60,6 +80,390 @@ header h1 {
     align-items: center;
 }
 
+/* Welcome Screen */
+.welcome-screen {
+    padding: 50px 20px;
+}
+
+.welcome-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.welcome-content h2 {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.welcome-content > p {
+    font-size: 1.3em;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.role-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.role-card {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-icon {
+    font-size: 4em;
+    margin-bottom: 15px;
+}
+
+.role-card h3 {
+    font-size: 1.5em;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.role-card p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+#studentModeSection {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.input-field {
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1em;
+    font-family: monospace;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.error-text {
+    color: var(--danger-color);
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+/* Teacher Dashboard */
+.teacher-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-section {
+    background: var(--bg-light);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-section h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1em;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.upload-area {
+    border: 3px dashed var(--primary-color);
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    margin: 10px 0;
+}
+
+.upload-area:hover {
+    background: #f0f5ff;
+    border-color: #667eea;
+}
+
+.upload-area.dragover {
+    background: #e6f2ff;
+    border-color: #667eea;
+}
+
+.upload-area p {
+    font-size: 1.1em;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+#uploadStatus {
+    text-align: center;
+    margin: 10px 0;
+    font-weight: 500;
+    font-size: 0.95em;
+}
+
+#uploadStatus.success {
+    color: var(--success-color);
+}
+
+#uploadStatus.error {
+    color: var(--danger-color);
+}
+
+.pdf-preview {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: #666;
+}
+
+.pdf-preview strong {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+}
+
+/* Questions Container */
+.questions-container {
+    background: white;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.question-form {
+    background: var(--bg-light);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.question-header h4 {
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+}
+
+.btn-danger:hover {
+    background: #c41d1d;
+}
+
+.question-form .form-group {
+    margin-bottom: 12px;
+}
+
+.question-form input[type="text"] {
+    padding: 8px;
+    font-size: 0.95em;
+}
+
+.answers-options {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.answers-options label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+}
+
+.answer-option {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 8px;
+    background: #fafafa;
+    border-radius: 4px;
+}
+
+.answer-option input[type="text"] {
+    padding: 6px;
+    font-size: 0.9em;
+}
+
+.answer-option input[type="radio"] {
+    cursor: pointer;
+}
+
+.answer-option span {
+    font-size: 0.85em;
+    color: #999;
+}
+
+/* Lessons List */
+.lessons-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.lesson-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--success-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.lesson-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 10px;
+}
+
+.lesson-card h3 {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 1.1em;
+}
+
+.lesson-code {
+    background: var(--primary-color);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.lesson-description {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+}
+
+.lesson-stats {
+    color: #999;
+    font-size: 0.85em;
+    margin-bottom: 12px;
+}
+
+.lesson-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.lesson-actions .btn {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 0.85em;
+}
+
+.share-link-preview {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 3px solid var(--warning-color);
+    margin-top: 10px;
+}
+
+.share-link-preview small {
+    display: block;
+    color: #666;
+    margin-bottom: 5px;
+    font-size: 0.8em;
+}
+
+.share-link-preview code {
+    display: block;
+    background: white;
+    padding: 8px;
+    border-radius: 3px;
+    word-break: break-all;
+    font-size: 0.75em;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.no-items {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+}
+
+/* Game Screen */
 .screen {
     display: none;
     padding: 40px 20px;
@@ -81,7 +485,6 @@ header h1 {
     }
 }
 
-/* Game Screen */
 .canvas-container {
     display: flex;
     justify-content: center;
@@ -203,70 +606,21 @@ header h1 {
     background: #fff1f0;
 }
 
-/* Lesson Screen */
-.lesson-container {
-    max-width: 700px;
+/* Loading Screen */
+.loading-container {
+    text-align: center;
+    max-width: 600px;
     margin: 0 auto;
 }
 
-.lesson-container h2 {
+.loading-container h2 {
     color: var(--primary-color);
     margin-bottom: 15px;
 }
 
-.lesson-container > p {
+.loading-container p {
     color: #666;
-    margin-bottom: 25px;
-}
-
-.upload-area {
-    border: 3px dashed var(--primary-color);
-    border-radius: 8px;
-    padding: 40px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: #f9f9f9;
-    margin-bottom: 20px;
-}
-
-.upload-area:hover {
-    background: #f0f5ff;
-    border-color: #667eea;
-}
-
-.upload-area.dragover {
-    background: #e6f2ff;
-    border-color: #667eea;
-}
-
-.upload-area p {
-    font-size: 1.2em;
-    color: var(--primary-color);
-    font-weight: 500;
-}
-
-#uploadStatus {
-    text-align: center;
-    margin: 15px 0;
-    font-weight: 500;
-}
-
-#uploadStatus.success {
-    color: var(--success-color);
-}
-
-#uploadStatus.error {
-    color: var(--danger-color);
-}
-
-#pdfPreview {
-    background: var(--bg-light);
-    padding: 15px;
-    border-radius: 6px;
-    margin: 20px 0;
-    max-height: 300px;
-    overflow-y: auto;
+    margin-bottom: 10px;
 }
 
 /* Game Over Screen */
@@ -307,6 +661,8 @@ header h1 {
     cursor: pointer;
     transition: all 0.3s ease;
     margin: 0 10px;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .btn:hover {
@@ -346,7 +702,38 @@ header h1 {
     margin-top: 30px;
 }
 
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--success-color);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-error {
+    background: var(--danger-color);
+}
+
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .teacher-dashboard {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
     header {
         padding: 20px 15px;
@@ -361,6 +748,15 @@ header h1 {
         gap: 15px;
     }
 
+    .role-cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .welcome-content h2 {
+        font-size: 1.8em;
+    }
+
     #gameCanvas {
         width: 100%;
         height: auto;
@@ -373,5 +769,13 @@ header h1 {
     .btn {
         padding: 10px 20px;
         margin: 5px;
+    }
+
+    .btn-large {
+        padding: 12px 30px;
+    }
+
+    .dashboard-section {
+        padding: 15px;
     }
 }
