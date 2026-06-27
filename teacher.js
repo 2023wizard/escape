@@ -51,6 +51,11 @@ class TeacherDashboard {
 
     async extractPDFText(pdfData) {
         try {
+            // Wait for pdfjsLib to be defined
+            if (typeof pdfjsLib === 'undefined') {
+                throw new Error('PDF.js library not loaded yet. Please try again.');
+            }
+
             const pdf = await pdfjsLib.getDocument({data: pdfData}).promise;
             let fullText = '';
 
